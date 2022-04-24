@@ -1,3 +1,4 @@
+import io
 import time
 import pandas as pd
 import streamlit as st
@@ -41,7 +42,6 @@ if(imobiliariaSelecionada == 'Vivareal'):
                 driver.get(url)
                 WebDriverWait(driver, 10).until(EC.presence_of_element_located(
                     (By.ID, "cookie-notifier-cta"))).click()
-
                 # encontrar nmr de páginas e anuncios
                 with st.spinner('Buscando quantidade de anúncios...'):
                     time.sleep(5)
@@ -61,6 +61,11 @@ if(imobiliariaSelecionada == 'Vivareal'):
                         str(qtdPaginas) + ' páginas e ' + str(len(linksTerrenos)) + ' anúncios foram encontrados.')
                     for link in linksTerrenos:
                         print(link)
+
+                # Pega o título dos resultados
+                tituloResultado = driver.find_element(By.CLASS_NAME, "results-summary__data").text
+                sTituloResultado = tituloResultado.split()
+                tituloArquivo = sTituloResultado[1] + '_' + sTituloResultado[5] + sTituloResultado[6] + sTituloResultado[7] + '.xlsx'
 
                 # Cria listas de dados
                 linksImagensTerrenos = []
@@ -103,9 +108,22 @@ if(imobiliariaSelecionada == 'Vivareal'):
                 st.success("Coleta de dados finalizada com sucesso!")
                 driver.quit()
                 # Cria estrutura de dados
+                buffer = io.BytesIO()
                 tabelaDados = pd.DataFrame(data={'Link Imagem Principal': linksImagensTerrenos,
                                                  'Título anúncio': titulosTerrenos, 'Endereço': enderecosTerrenos, 'Metragem': metragensTerrenos, 'Preço': precosTerrenos})
                 st.dataframe(tabelaDados)
+
+                with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
+                    tabelaDados.to_excel(writer, sheet_name='Terrenos')
+
+                    writer.save()
+
+                    st.download_button(
+                        label="Baixe a tabela aqui!",
+                        data=buffer,
+                        file_name=tituloArquivo,
+                        mime="application/vnd.ms-excel"
+                    )
                 
         else:
             st.error('Insira um link correto!')
