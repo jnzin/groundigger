@@ -72,38 +72,43 @@ if(imobiliariaSelecionada == 'Vivareal'):
                 metragensTerrenos = []
                 precosTerrenos = []
 
-                with st.empty():
-                    barraProgresso = st.progress(0)
-                    divisorBarraProgresso = int(100 / len(linksTerrenos))
-                    for i in range(len(linksTerrenos)):
-                        driver.get(linksTerrenos[i])
-                        time.sleep(5)
-                        imagemLinkTerreno = driver.find_element(
-                            By.XPATH, "//div[@class='hero js-hero']//div[@class='carousel js-carousel']//img").get_attribute("src")
-                        linksImagensTerrenos.append(imagemLinkTerreno)
+                
+                barraProgresso = st.progress(0)
+                divisorBarraProgresso = int(100 / len(linksTerrenos))
+                placeholder = st.empty()
+                for i in range(len(linksTerrenos)):
+                    driver.get(linksTerrenos[i])
+                    #time.sleep(5)
+                    #WebDriverWait(driver, 5).until(EC.presence_of_element_located(By.XPATH, "//div[@class='hero js-hero']//div[@class='carousel js-carousel']//img"))
+                    imagemLinkTerreno = driver.find_element(
+                        By.XPATH, "//div[@class='hero js-hero']//div[@class='carousel js-carousel']//img").get_attribute("src")
+                    linksImagensTerrenos.append(imagemLinkTerreno)
 
-                        tituloTerreno = driver.find_element(
-                            By.TAG_NAME, "h1").text
-                        titulosTerrenos.append(tituloTerreno)
+                    tituloTerreno = driver.find_element(
+                        By.TAG_NAME, "h1").text
+                    titulosTerrenos.append(tituloTerreno)
 
-                        enderecoTerreno = driver.find_element(
-                            By.XPATH, "//p[@class='title__address js-address']").text
-                        enderecosTerrenos.append(enderecoTerreno)
+                    enderecoTerreno = driver.find_element(
+                        By.XPATH, "//p[@class='title__address js-address']").text
+                    enderecosTerrenos.append(enderecoTerreno)
 
-                        metragemTerreno = driver.find_element(
-                            By.XPATH, "//li[@class='features__item features__item--area js-area']").text
-                        metragensTerrenos.append(metragemTerreno)
+                    metragemTerreno = driver.find_element(
+                        By.XPATH, "//li[@class='features__item features__item--area js-area']").text
+                    metragensTerrenos.append(metragemTerreno)
 
-                        precoTerreno = driver.find_element(
-                            By.XPATH, "//h3[@class='price__price-info js-price-sale']").text
-                        precosTerrenos.append(precoTerreno)
+                    precoTerreno = driver.find_element(
+                        By.XPATH, "//h3[@class='price__price-info js-price-sale']").text
+                    precosTerrenos.append(precoTerreno)
+                    
+                    with placeholder.container():
+                        st.write("Coletando dados... Anúncio "+ str(i + 1) + " de " + str(len(linksTerrenos)))  
 
-                        barraProgresso.progress((i + 1)*divisorBarraProgresso)
+                    barraProgresso.progress((i + 1)*divisorBarraProgresso)
 
-                        st.write("Coletando dados... Anúncio "+ str(i + 1) + " de " + str(len(linksTerrenos)))
 
                 st.success("Coleta de dados finalizada com sucesso!")
                 driver.quit()
+                
                 # Cria estrutura de dados
                 st.subheader("Tabela gerada:")
                 buffer = io.BytesIO()
