@@ -20,14 +20,11 @@ def clicarNextPageButtonSePossivel():
 
 PATH = "/chromedriver.exe"
 
-# streamlit
-st.write("""
-Plataforma Terrenos - 
-Coleta de informações disponíveis sobre terrenos\n
-""")
-
+# streamlits
+st.image("https://linkages.com.br/wp-content/uploads/2021/10/Proposta_3_Logo-Linkages_sem_Fundo-1.png", width=200)
+st.title("Plataforma Terrenos - Groundigger")
 imobiliariaSelecionada = st.selectbox(
-    'Selecione uma imobiliária suportada: ', ('Escolha uma...', 'Vivareal', 'Zapimóveis'))
+    'Selecione uma imobiliária abaixo: ', ('Escolha uma...', 'Vivareal', 'Zapimóveis'))
 
 if(imobiliariaSelecionada == 'Vivareal'):
     url = st.text_input('Insira o link da busca realizada: ',
@@ -37,6 +34,7 @@ if(imobiliariaSelecionada == 'Vivareal'):
             linksTerrenos = []
             iniciarButton = st.button('Iniciar coleta de dados')
             if(iniciarButton):
+                start_time = time.time()
                 st.balloons()
                 driver = webdriver.Chrome()
                 driver.get(url)
@@ -58,7 +56,7 @@ if(imobiliariaSelecionada == 'Vivareal'):
                         for terreno in elementosTerrenos:
                             linksTerrenos.append(terreno.get_attribute('href'))
                     st.success(
-                        str(qtdPaginas) + ' páginas e ' + str(len(linksTerrenos)) + ' anúncios foram encontrados.')
+                        str(qtdPaginas) + ' página(s) e ' + str(len(linksTerrenos)) + ' anúncio(s) foram encontrados.')
                     for link in linksTerrenos:
                         print(link)
 
@@ -100,14 +98,14 @@ if(imobiliariaSelecionada == 'Vivareal'):
                             By.XPATH, "//h3[@class='price__price-info js-price-sale']").text
                         precosTerrenos.append(precoTerreno)
 
-                        st.write("Terreno #" + str(i + 1) +
-                                 " ----- COMPLETADO")
-
                         barraProgresso.progress((i + 1)*divisorBarraProgresso)
+
+                        st.write("Coletando dados... Anúncio "+ str(i + 1) + " de " + str(len(linksTerrenos)))
 
                 st.success("Coleta de dados finalizada com sucesso!")
                 driver.quit()
                 # Cria estrutura de dados
+                st.subheader("Tabela gerada:")
                 buffer = io.BytesIO()
                 tabelaDados = pd.DataFrame(data={'Link Imagem Principal': linksImagensTerrenos,
                                                  'Título anúncio': titulosTerrenos, 'Endereço': enderecosTerrenos, 'Metragem': metragensTerrenos, 'Preço': precosTerrenos})
@@ -125,5 +123,6 @@ if(imobiliariaSelecionada == 'Vivareal'):
                         mime="application/vnd.ms-excel"
                     )
                 
+                print("--- %s seconds ---" % (time.time() - start_time))
         else:
             st.error('Insira um link correto!')
