@@ -3,6 +3,7 @@ import time
 import pandas as pd
 import streamlit as st
 from selenium import webdriver
+import undetected_chromedriver as uc
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -36,7 +37,9 @@ if(imobiliariaSelecionada == 'Vivareal'):
             if(iniciarButton):
                 start_time = time.time()
                 st.balloons()
-                driver = webdriver.Chrome()
+                options = webdriver.ChromeOptions() 
+                options.add_argument('start-maximized')
+                driver = uc.Chrome(options=options)
                 driver.get(url)
                 WebDriverWait(driver, 10).until(EC.presence_of_element_located(
                     (By.ID, "cookie-notifier-cta"))).click()
@@ -57,8 +60,6 @@ if(imobiliariaSelecionada == 'Vivareal'):
                             linksTerrenos.append(terreno.get_attribute('href'))
                     st.success(
                         str(qtdPaginas) + ' página(s) e ' + str(len(linksTerrenos)) + ' anúncio(s) foram encontrados.')
-                    for link in linksTerrenos:
-                        print(link)
 
                 # Pega o título dos resultados
                 tituloResultado = driver.find_element(By.CLASS_NAME, "results-summary__data").text
@@ -78,8 +79,12 @@ if(imobiliariaSelecionada == 'Vivareal'):
                 placeholder = st.empty()
                 for i in range(len(linksTerrenos)):
                     driver.get(linksTerrenos[i])
-                    #time.sleep(5)
-                    #WebDriverWait(driver, 5).until(EC.presence_of_element_located(By.XPATH, "//div[@class='hero js-hero']//div[@class='carousel js-carousel']//img"))
+                    time.sleep(2)
+                    #try:
+                    #    WebDriverWait(driver, 5).until(EC.presence_of_element_located(
+                    #        (By.XPATH, "//h1[@class='title__title js-title-view']")))
+                    #except:
+                    #    driver.refresh()
                     imagemLinkTerreno = driver.find_element(
                         By.XPATH, "//div[@class='hero js-hero']//div[@class='carousel js-carousel']//img").get_attribute("src")
                     linksImagensTerrenos.append(imagemLinkTerreno)
@@ -127,7 +132,7 @@ if(imobiliariaSelecionada == 'Vivareal'):
                         file_name=tituloArquivo,
                         mime="application/vnd.ms-excel"
                     )
-                
+                # add points
                 print("--- %s seconds ---" % (time.time() - start_time))
         else:
             st.error('Insira um link correto!')
