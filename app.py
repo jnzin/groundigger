@@ -22,8 +22,14 @@ def clicarNextPageButtonSePossivel():
 PATH = "/chromedriver.exe"
 
 # streamlits
+st.set_page_config(
+   page_title="AreaInsight",
+   page_icon="🧊",
+   layout="wide",
+   initial_sidebar_state="expanded",
+)
 st.image("https://linkages.com.br/wp-content/uploads/2021/10/Proposta_3_Logo-Linkages_sem_Fundo-1.png", width=200)
-st.title("Plataforma Terrenos - Groundigger")
+st.title("AreaInsight")
 imobiliariaSelecionada = st.selectbox(
     'Selecione uma imobiliária abaixo: ', ('Escolha uma...', 'Vivareal', 'Zapimóveis'))
 
@@ -36,7 +42,6 @@ if(imobiliariaSelecionada == 'Vivareal'):
             iniciarButton = st.button('Iniciar coleta de dados')
             if(iniciarButton):
                 start_time = time.time()
-                st.balloons()
                 options = webdriver.ChromeOptions() 
                 options.add_argument('start-maximized')
                 driver = uc.Chrome(options=options)
@@ -79,7 +84,7 @@ if(imobiliariaSelecionada == 'Vivareal'):
                 placeholder = st.empty()
                 for i in range(len(linksTerrenos)):
                     driver.get(linksTerrenos[i])
-                    time.sleep(2)
+                    time.sleep(5)
                     #try:
                     #    WebDriverWait(driver, 5).until(EC.presence_of_element_located(
                     #        (By.XPATH, "//h1[@class='title__title js-title-view']")))
