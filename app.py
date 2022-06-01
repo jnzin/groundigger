@@ -44,7 +44,7 @@ if(imobiliariaSelecionada == 'Vivareal'):
                 start_time = time.time()
                 options = webdriver.ChromeOptions() 
                 options.add_argument('start-maximized')
-                driver = uc.Chrome(options=options)
+                driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
                 driver.get(url)
                 WebDriverWait(driver, 10).until(EC.presence_of_element_located(
                     (By.ID, "cookie-notifier-cta"))).click()
