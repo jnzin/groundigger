@@ -23,7 +23,7 @@ PATH = "/chromedriver.exe"
 
 # streamlits
 st.set_page_config(
-   page_title="AreaInsight",
+   page_title="AreaInsightas",
    page_icon="🧊",
    layout="wide",
    initial_sidebar_state="expanded",
